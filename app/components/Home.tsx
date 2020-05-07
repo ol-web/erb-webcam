@@ -58,7 +58,7 @@ export default function Home() {
           ))}
         </select>
 
-        <p className={styles.version}>v1.0.0</p>
+        <p className={styles.version}>v1.1.0</p>
       </div>
 
       <BottomLink to={routes.CREDITS}>Credits</BottomLink>

@@ -8,15 +8,14 @@
  * When running `yarn build` or `yarn build-main`, this file is compiled to
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
-import { app, BrowserWindow } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
-import MenuBuilder from './menu';
+import path from "path";
+import { app, BrowserWindow, ipcMain, shell, session } from "electron";
+import { autoUpdater } from "electron-updater";
+import log from "electron-log";
 
 export default class AppUpdater {
   constructor() {
-    log.transports.file.level = 'info';
+    log.transports.file.level = "info";
     autoUpdater.logger = log;
     autoUpdater.checkForUpdatesAndNotify();
   }
@@ -24,22 +23,22 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
+if (process.env.NODE_ENV === "production") {
+  const sourceMapSupport = require("source-map-support");
   sourceMapSupport.install();
 }
 
 if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
+  process.env.NODE_ENV === "development" ||
+  process.env.DEBUG_PROD === "true"
 ) {
-  require('electron-debug')();
+  require("electron-debug")();
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
+  const installer = require("electron-devtools-installer");
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+  const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
 
   return Promise.all(
     extensions.map(name => installer.default(installer[name], forceDownload))
@@ -48,8 +47,8 @@ const installExtensions = async () => {
 
 const createWindow = async () => {
   if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
+    process.env.NODE_ENV === "development" ||
+    process.env.DEBUG_PROD === "true"
   ) {
     await installExtensions();
   }
@@ -58,21 +57,23 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
+    frame: false,
     webPreferences:
-      process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
+      process.env.NODE_ENV === "development" || process.env.E2E_BUILD === "true"
         ? {
             nodeIntegration: true
           }
         : {
-            preload: path.join(__dirname, 'dist/renderer.prod.js')
+            preload: path.join(__dirname, "dist/renderer.prod.js")
           }
   });
 
+  // Menu.setApplicationMenu(null)
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.webContents.on("did-finish-load", () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -84,13 +85,14 @@ const createWindow = async () => {
     }
   });
 
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
+  mainWindow.webContents.on("new-window", (e, url) => {
+    e.preventDefault();
+    shell.openExternal(url);
+  });
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -100,18 +102,43 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (process.platform !== 'darwin') {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on('ready', createWindow);
+app.on("ready", createWindow);
 
-app.on('activate', () => {
+app.on("activate", () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });
+
+ipcMain.on("minimize", () => {
+  if (mainWindow === null) return;
+  mainWindow.minimize();
+});
+
+ipcMain.on("maximize", () => {
+  if (mainWindow === null) return;
+
+  if (mainWindow.isMaximized()) mainWindow.unmaximize();
+  else mainWindow.maximize();
+});
+ipcMain.on("exit", () => {
+  app.quit();
+});
+
+/*
+import { app,shell} from "electron";
+
+app.quit();
+this.mainWindow.webContents.reload();
+this.mainWindow.webContents.toggleDevTools();
+shell.openExternal("https://electronjs.org");
+this.mainWindow.setFullScreen( !this.mainWindow.isFullScreen());
+*/

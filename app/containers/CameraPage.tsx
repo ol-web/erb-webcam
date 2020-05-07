@@ -1,13 +1,13 @@
-import { bindActionCreators, Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import Counter from '../components/Counter';
+import { bindActionCreators, Dispatch } from "redux";
+import { connect } from "react-redux";
+import Camera from "../components/Camera";
 import {
   increment,
   decrement,
   incrementIfOdd,
   incrementAsync
-} from '../actions/counter';
-import { counterStateType } from '../reducers/types';
+} from "../actions/counter";
+import { counterStateType } from "../reducers/types";
 
 function mapStateToProps(state: counterStateType) {
   return {
@@ -27,4 +27,4 @@ function mapDispatchToProps(dispatch: Dispatch) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Counter);
+export default connect(mapStateToProps, mapDispatchToProps)(Camera);

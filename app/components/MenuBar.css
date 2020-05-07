@@ -1,0 +1,47 @@
+.menuBar {
+  background: var(--text-background-solid);
+  background: rgba(0, 0, 0, 0.34);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  -webkit-app-region: drag;
+  height: 25px;
+  z-index: 9999999999;
+  width: 100%;
+}
+
+.menuBarTitle {
+  margin: 0;
+  font-size: 0.9rem;
+  position: absolute;
+  left: 6px;
+}
+
+.menuBarIcons {
+  -webkit-app-region: no-drag;
+  display: flex;
+}
+
+.menuBarIcons i {
+  padding: 0 5px;
+}
+
+.menuBarIcon {
+  display: block;
+  height: 25px;
+  display: flex;
+  align-items: center;
+}
+
+.menuBarIcon:hover {
+  background: var(--text);
+}
+
+.menuBarIcons svg {
+  padding: 0 10px;
+  box-sizing: content-box;
+}
+
+.menuBarIcon:hover svg {
+  fill: var(--text-background);
+}

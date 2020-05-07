@@ -1,11 +1,11 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import { createHashHistory } from 'history';
-import { routerMiddleware, routerActions } from 'connected-react-router';
-import { createLogger } from 'redux-logger';
-import createRootReducer from '../reducers';
-import * as counterActions from '../actions/counter';
-import { counterStateType } from '../reducers/types';
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
+import { createHashHistory } from "history";
+import { routerMiddleware, routerActions } from "connected-react-router";
+import { createLogger } from "redux-logger";
+import createRootReducer from "../reducers";
+import * as counterActions from "../actions/counter";
+import { counterStateType } from "../reducers/types";
 
 declare global {
   interface Window {
@@ -35,12 +35,12 @@ const configureStore = (initialState?: counterStateType) => {
 
   // Logging Middleware
   const logger = createLogger({
-    level: 'info',
+    level: "info",
     collapsed: true
   });
 
   // Skip redux logs in console during the tests
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV !== "test") {
     middleware.push(logger);
   }
 
@@ -72,9 +72,9 @@ const configureStore = (initialState?: counterStateType) => {
 
   if (module.hot) {
     module.hot.accept(
-      '../reducers',
+      "../reducers",
       // eslint-disable-next-line global-require
-      () => store.replaceReducer(require('../reducers').default)
+      () => store.replaceReducer(require("../reducers").default)
     );
   }
 

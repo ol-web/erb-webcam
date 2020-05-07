@@ -18,7 +18,7 @@ coverage
 
 # node-waf configuration
 .lock-wscript
-
+.env
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 .eslintcache

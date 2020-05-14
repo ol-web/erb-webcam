@@ -20,13 +20,11 @@ export default function Camera(props: RouteComponentProps) {
   }, [webcamRef]);
 
   const goFullscreen = useCallback(() => {
-    if (!webcamRef.current) return;
-    document.querySelector("video")?.requestFullscreen();
+    if (webcamRef.current) webcamRef.current.video?.requestFullscreen();
   }, [webcamRef]);
 
   const toggleMirroring = useCallback(() => {
-    if (!webcamRef.current) return;
-    setMirrored(val => !val);
+    if (webcamRef.current) setMirrored(val => !val);
   }, [webcamRef]);
 
   const webcamProps = {
@@ -47,25 +45,36 @@ export default function Camera(props: RouteComponentProps) {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-tclass="cameraContainer">
       <div className={styles.btnGroup}>
         <button
           type="button"
           onClick={captureScreenshot}
           className={styles.btn}
+          data-tclass="captureBtn"
         >
           Capture photo
         </button>
-        <button type="button" onClick={goFullscreen} className={styles.btn}>
+        <button
+          type="button"
+          onClick={goFullscreen}
+          className={styles.btn}
+          data-tclass="fullscreenBtn"
+        >
           Go fullscreen
         </button>
-        <button type="button" onClick={toggleMirroring} className={styles.btn}>
+        <button
+          type="button"
+          onClick={toggleMirroring}
+          className={styles.btn}
+          data-tclass="mirrorBtn"
+        >
           Toggle mirroring
         </button>
       </div>
 
       <div className={styles.webcamContainer}>
-        <Webcam {...webcamProps} />
+        <Webcam data-tclass="webcamComp" {...webcamProps} />
       </div>
 
       <BottomLink to={routes.HOME}>Choose camera</BottomLink>

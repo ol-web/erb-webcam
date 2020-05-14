@@ -18,7 +18,7 @@ const assertNoConsoleErrors = async t => {
 };
 
 fixture`Home Page`.page("../../app/app.html").afterEach(assertNoConsoleErrors);
-
+/*
 test("e2e", async t => {
   await t.expect(getPageTitle()).eql("Hello Electron React!");
 });
@@ -95,3 +95,4 @@ test("should back to home if back button clicked", async t => {
     .expect(Selector('[data-tid="container"]').visible)
     .ok();
 });
+*/
